@@ -24,7 +24,7 @@ app.post("/calculate/:num1/:symbol/:num2", (req, res) => {
     divide: (num1: number, num2: number): number => num1 / num2,
   }
 
-  const result = calfuncs[symbol](num1, num2)
+  const result: any = calfuncs[symbol](num1, num2)
 
   res.json({
     answer: result,
