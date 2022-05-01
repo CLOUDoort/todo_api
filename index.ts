@@ -17,14 +17,14 @@ app.post("/calculate/:num1/:symbol/:num2", (req, res) => {
   const num2 = Number(req.params.num2)
   const symbol: any = req.params.symbol
 
-  const calfuncs = {
+  const calfuncs: { [index: string]: any } = {
     plus: (num1: number, num2: number): number => num1 + num2,
     minus: (num1: number, num2: number): number => num1 - num2,
     multiply: (num1: number, num2: number): number => num1 * num2,
     divide: (num1: number, num2: number): number => num1 / num2,
   }
 
-  const result: any = calfuncs[symbol](num1, num2)
+  const result: number = calfuncs[symbol](num1, num2)
 
   res.json({
     answer: result,
