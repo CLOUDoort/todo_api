@@ -10,7 +10,6 @@ app.use(cors())
 
 // parameter를 보내는 방식 총 3가지
 // params, body, query
-//
 
 app.post("/calculate/:num1/:symbol/:num2", (req, res) => {
   const num1 = Number(req.params.num1)
@@ -18,6 +17,7 @@ app.post("/calculate/:num1/:symbol/:num2", (req, res) => {
   const symbol: any = req.params.symbol
 
   const calfuncs: { [index: string]: any } = {
+    // object형태로 정의할 것이지만 key값들은 string, value값은 any타입으로정의
     plus: (num1: number, num2: number): number => num1 + num2,
     minus: (num1: number, num2: number): number => num1 - num2,
     multiply: (num1: number, num2: number): number => num1 * num2,
@@ -29,27 +29,6 @@ app.post("/calculate/:num1/:symbol/:num2", (req, res) => {
   res.json({
     answer: result,
   })
-})
-
-// 사칙연산
-app.post("/plus/:num1/:num2", (req, res) => {
-  const answer = Number(req.params.num1) + Number(req.params.num2)
-  res.json({
-    answer: answer,
-  })
-})
-
-app.post("/minus/:num1/:num2", (req, res) => {
-  const answer = Number(req.body.num1) - Number(req.body.num2)
-  res.json({
-    answer: answer,
-  })
-})
-
-app.post("/multiply/:num1/:num2", (req, res) => {})
-
-app.use((error: any, req: any, res: any, next: any) => {
-  res.status(500).send("error occurs")
 })
 
 app.listen(PORT, () =>
