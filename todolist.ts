@@ -1,12 +1,11 @@
 import express from "express"
 import cors from "cors"
-import * as fs from "fs"
-import { nextTick } from "process"
+import fs from "fs"
 
 const app = express()
 const PORT = 3714
 app.use(express.static("public"))
-app.use(express.urlencoded({ extended: true })) // form 데이터 가공
+app.use(express.urlencoded({ extended: true })) // form 데이터 가공 // 미들웨어 사용
 app.use(express.json()) // json 데이터 가공
 app.use(cors())
 
@@ -14,6 +13,9 @@ app.use(cors())
 // bodyParams => request body에 정보를 담아 전달
 // url에 전부 드러나는 queryParams는 사용 자제할 것
 // get만 body를 못받음, path와 query만 받음
+
+// rest api 디자인 규격
+// get, post, put, delete, patch => CRUD작업
 
 // READ
 app.get("/", (req, res) => {
@@ -70,6 +72,7 @@ app.put("/update", (req, res) => {
     if (err) return console.log(err)
     res.json(data)
   })
+  // 값이 변한 data 값 저장
 })
 
 //DELETE
@@ -97,5 +100,6 @@ app.delete("/delete", (req, res) => {
 })
 
 app.listen(PORT, () => {
+  // 서버가 만들어지는 과정, 굉장히 간단함.
   console.log(`Example app listening at http://localhost:${PORT}`)
 })
