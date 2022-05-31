@@ -1,7 +1,8 @@
-import express from "express"
+import express, { ErrorRequestHandler, Handler } from "express"
 import cors from "cors"
 import usersRouter from "./api/users"
 import userPostsRouter from "./api/users/posts"
+import testRouter from "./api/test"
 import { useMysql } from "./middleware/useMysql"
 
 const app = express()
@@ -16,6 +17,15 @@ app.use(cors())
 app.use(useMysql)
 app.use("/v1", usersRouter) // 라우터 주소 default값 설정
 app.use("/v1", userPostsRouter)
+app.use("/test", testRouter)
+
+const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
+  res.send({
+    text: `${err}`,
+  })
+}
+
+app.use(errorHandler)
 
 app.listen(PORT, () => {
   // 서버가 만들어지는 과정, 굉장히 간단함.
