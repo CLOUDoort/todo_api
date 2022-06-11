@@ -14,7 +14,7 @@ interface customConnection extends Connection {
   run?: Function
 }
 
-interface connectionWithRunFunction extends Connection {
+export interface connectionWithRunFunction extends Connection {
   // 타입을 지정하기 위해 extends 사용
   run: Function
 }

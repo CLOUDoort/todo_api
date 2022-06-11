@@ -1,115 +1,75 @@
-// users 모듈화
-import express, { Request, Response, NextFunction } from "express"
-const router = express.Router()
+// service layered
 
-interface RequestWithConnection extends Request {
-  mysqlConnection: any
-}
+// Persistence Layer(DB 작업)
 
-// users: 집합(컬렉션)
-// /users/2/name 예시
+import { connectionWithRunFunction as connection } from "../modules/mysql"
+import bcrypt from "bcrypt"
 
 // GET /users: users의 모든 정보 읽기 (컬렉션 리스트 읽기)
-router.get("/users", async (request: Request, response: Response) => {
-  const req = request as RequestWithConnection
-  const res = response
-  const connection = req.mysqlConnection
-  const selectData = await connection.run(`SELECT * FROM users;`)
 
-  res.send(selectData)
-})
-
-// GET /users/5: users의 한 개체의 정보 읽기 / path_parameter 추가
-router.get("/users/:userIdx", async (request: Request, response: Response) => {
-  const req = request as RequestWithConnection
-  const res = response
-  const { userIdx } = req.params
-
-  const connection = req.mysqlConnection
-  const [selectUserResult] = await connection.run(
-    // 하나의 정보만을 가져오게 하기 위해 구조분해할당하고 첫 번째 값을 가져오게 한다.
-    `SELECT * FROM users WHERE idx = ?;`,
-    [userIdx]
-  )
-  res.send(selectUserResult)
-})
-
-// CREATE /users: users에 한 개체를 추가
-router.post("/users", async (request: Request, response: Response) => {
-  const req = request as RequestWithConnection
-  const res = response
-  const { id, password, name, age } = req.body
-
-  const connection = req.mysqlConnection
-  const postUserData = await connection.run(
-    `INSERT INTO users (id, password, name, age) VALUES (?, ?, ?, ?)`,
-    [id, password, name, age]
-  )
-  res.send({
-    success: true,
-  })
-})
-
-// PUT /users: users 컬렉션을 전부 수정하겠다.(RESTful에서는 주로 사용되지 않는다.)
-// 새로 덮어 씌운다는 의미
-router.put("/users", async (req, res) => {
-  // users 테이블의 모든 정보 제거
-  // users AutoIncrement 초기화
-  // users에 새로운 users 정보를 다수 추가
-
-  res.send({
-    success: true,
-  })
-})
-
-// UPDATE / path_parameter를 통해 일부 수정
-router.put(
-  "/users/:userIdx",
-  async (request: Request, response: Response, next: NextFunction) => {
-    const req = request as RequestWithConnection
-    const res = response
-    const { userIdx } = req.params
-    const { id, password, name, age } = req.body
-
-    const connection = req.mysqlConnection
-    try {
-      await connection.beginTransaction()
-      await connection.run(
-        `UPDATE users SET id = ?, password = ? WHERE idx = ?;`,
-        [id, password, userIdx]
-      )
-      // throw new Error("트랜잭션 중 에러")
-      await connection.run(
-        `UPDATE users SET name = ?, age = ? WHERE idx = ?;`,
-        [name, age, userIdx]
-      )
-      await connection.commit()
-      res.send({
-        success: true,
-      })
-    } catch (e) {
-      await connection.rollback()
-      next(e)
-    }
+// request => params, mysql
+// response => status(http 상태 코드), bodydata
+const getUsers = async (params: any, mysql: any) => {
+  console.log("getUsers Success")
+  // throw "인위적인 에러"
+  return {
+    status: 200,
+    data: {
+      users: ["data"],
+    },
   }
-)
+}
 
-// DELETE / path_parameter를 통해 일부 삭제
-router.delete(
-  "/users/:userIdx",
-  async (request: Request, response: Response) => {
-    const req = request as RequestWithConnection
-    const res = response
-    const { userIdx } = req.params
+// POST /users: users에 한 개체를 추가
+// id, password, email, age, name
+const postUsers = async (
+  params: {
+    id: string
+    password: string
+    email: string
+    age: number
+    name: string
+  },
+  mysql: connection
+) => {
+  const { id, password, email, age, name } = params
 
-    const connection = req.mysqlConnection
-    const deleteDB = await connection.run(`DELETE FROM users WHERE idx = ?;`, [
-      userIdx,
-    ])
-    res.send({
-      success: true,
-    })
+  const salt = await bcrypt.genSalt(10) // 소금생성
+  const hashedPassword = await bcrypt.hash(password, salt)
+  // 이메일 검증이 끝났다는 가정 하에 진행
+  await mysql.run(
+    "INSERT INTO users (id, password, email, age, name) VALUES (?, ?, ?, ?, ?);",
+    [id, hashedPassword, email, age, name]
+  )
+
+  return {
+    status: 201, // 생성해줬기 때문에 200이 아닌 201
+    data: {},
   }
-)
+}
 
-export default router
+// 1. 모바일 인증: NaverCloud
+// 2. 이메일 인증: Mailgun, AWS Route53(도메인 구입), 기타 부연 설정,
+// 구현되어 있는 서비스를 사용
+
+export default {
+  getUsers,
+  postUsers,
+}
+// 익명 내보내기
+
+// 회원들: users
+// 1. 회원가입
+//    - 회원 등록 POST /users
+//    - 이메일 인증 코드 발송
+//    - 이메일 인증 코드 검증
+//
+// 2. 로그인 (토큰 발급) POST /auth
+//    - 로그인
+
+// 권한 검사 => token 사용
+
+// 암호화 string => 암호화된 문자열 => string (양방향)
+// 해시화 string => 일정한 길이의 치환된 문자열 (단방향)
+
+// 해쉬화 사용
