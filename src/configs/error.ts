@@ -11,6 +11,10 @@ const errorConfigs: { [key: string]: { message: string; status: number } } = {
     message: "비밀번호가 일치하지 않습니다.",
     status: 403,
   },
+  E3000: {
+    message: "권한이 올바르지 않습니다.",
+    status: 403,
+  },
   // 에러 발생 시 재사용하기 위해 만듬, 에러 설명
 }
 

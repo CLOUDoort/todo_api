@@ -10,7 +10,13 @@ export const useMysql = async (
   res: Response,
   next: NextFunction
 ) => {
-  const connection = await mysql.connect()
-  req.mysqlConnection = connection
-  next()
+  mysql
+    .connect()
+    .then((connection) => {
+      req.mysqlConnection = connection
+      next()
+    })
+    .catch((e: Error) => {
+      next(e)
+    })
 }

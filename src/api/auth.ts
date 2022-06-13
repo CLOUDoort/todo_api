@@ -19,14 +19,15 @@ const postAuth = async (
     password,
     selectHashedPassword[0].password
   )
-  console.log(isEqual) // true, false 리턴
+  // console.log(isEqual) // true, false 리턴
 
   if (!isEqual) {
     throw new Error("E2000")
   }
 
-  const token = JWT.sign({ id }, "web-study") // payload의 id값은 우리가 누구인지 구분짓기 위한 부분, id 값을 알아도 뒤의 secret값을 모르면 token을 알 수 없다.
-  console.log(token)
+  const payload = { id }
+  const secret = "web-study"
+  const token = JWT.sign(payload, secret) // payload의 id값은 우리가 누구인지 구분짓기 위한 부분, id 값을 알아도 뒤의 secret값을 모르면 token을 알 수 없다.
 
   return {
     status: 201,
