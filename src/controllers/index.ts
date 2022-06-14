@@ -12,41 +12,33 @@ interface RequestWithConnection extends Request {
 }
 
 const registerAllApis = async (app: Express, configs: apiConfigsType) => {
-  //   app.get("url", (req, res, next) => {})
+  //   app.get("url", (req, res, next) => {}) 이와 같은 형태로 구현되어야 한다.
   for (const apiName in configs) {
     // object에서 key값만 불러와 반복문을 돌리는 문법 => for..in
+    // apiName은 api.ts의 getUsers, postUsers... 라우터의 설정값
     const apiConfig: apiConfigType = configs[apiName]
-    const {
-      path: urlPath,
-      method,
-      handlerPath,
-      handlerName,
-      authorizer: isRequireAuthorizer,
-    } = apiConfig
+    const { path: urlPath, method, handlerPath, handlerName, authorizer: isRequireAuthorizer } = apiConfig
+    // handlerName을 통해 handlerPath를 불러옴
 
-    // __dirname = /Users/cloudoort/Desktop/projects/todo_api/src/controllers => 절대경로
-    // handlerPath = "./src/api/users_module.ts" => 상대경로
-    const apiModulePath = path.join(__dirname, "../", "../", handlerPath) // 절대경로로 설정
-    const { default: apiModule } = await import(apiModulePath)
+    // handlerPath = "./src/api/users.ts" => 상대경로
+    const apiModulePath = path.join(__dirname, "../", "../", handlerPath) // users.ts의 절대경로(모듈)
+    const { default: apiModule } = await import(apiModulePath) // users.ts 불러옴
 
-    // path.join은 운영체제 별로 파일import default from '../modules/mysql';
-    // 을 표현한는 방식이 다르기 때문에, 경import { authorizer } from '../middleware/authorizer';
-    // 로를 합치는데 있어서 아무 문제 없이 경로를 합쳐주는 함수
-    // 동적 가져오기 / 시간이 어느정도 들어가는 작업이라서 await 사용/ directory name
-    // app[method](path, handlerPath)
-    const handlerFunction: (params: any, mysql: any) => Promise<any> =
-      apiModule[handlerName]
+    const handlerFunction: (params: any, mysql: any) => Promise<any> = apiModule[handlerName]
+    // async/await을 사용하니까 promise로 반환
+    // handlerName을 통해 특정 함수를 불러옴(getUsers, postUsers...)
+    // handlerFuncion = users.ts의 특정 함수 로직
 
-    const APIHandler = (
-      request: Request,
-      response: Response,
-      next: NextFunction
-    ) => {
+    // 여기서 req, res, next 처리하고 apiModule(api.ts)에서는 params와 mysql만 처리하도록 설계
+    const APIHandler = (request: Request, response: Response, next: NextFunction) => {
       const req = request as RequestWithConnection
       const res = response
       const params = req.body
       const connection = req.mysqlConnection
 
+      // params 자리에 params값을, mysql자리에 connection을 넣어준다.
+      // app[method]에 async를 사용하면 에러처리가 작동하지 않기 때문에 promise를 반환하는 handlerFunction을 내부에서 호출한 뒤
+      // then, catch를 통해 에러처리를 한다.
       handlerFunction(params, connection)
         .then((returnObj: { status: number; data: { [key: string]: any } }) => {
           const { status, data } = returnObj
@@ -60,10 +52,9 @@ const registerAllApis = async (app: Express, configs: apiConfigsType) => {
         })
         .catch((e) => next(e))
     }
-    isRequireAuthorizer
-      ? app[method](urlPath, authorizer, APIHandler)
-      : app[method](urlPath, APIHandler)
+    isRequireAuthorizer ? app[method](urlPath, authorizer, APIHandler) : app[method](urlPath, APIHandler)
 
+    // 삼항연산자 사용
     // app.use(middleware) / 모든 경우
     // app.method('url', middleware, (req, res) => {}) / 특정 경우
   }

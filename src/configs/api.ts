@@ -1,5 +1,6 @@
 // Controller의 Configs(설정값)
 
+// apiConfigs value 타입지정
 export interface apiConfigType {
   path: string
   method: "get" | "post" | "put" | "delete"
@@ -8,7 +9,8 @@ export interface apiConfigType {
   authorizer: boolean
 }
 
-export type apiConfigsType = { [key: string]: apiConfigType }
+// apiConfigs 타입 지정
+export type apiConfigsType = { [key: string]: apiConfigType } // key값과 value값이 정확히 무엇이 들어올 지 모를 때 {[key: string]: any}로 타입을 설정하는데 여기서는 value값이 어떤 값이 들어올 지 확실하기 때문에 value 타입을 따로 만들어주어서 넣어준다.
 
 const apiConfigs: apiConfigsType = {
   getUsers: {

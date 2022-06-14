@@ -20,8 +20,9 @@ app.use(useMysql)
 // Layered Architecture_Presentation Layer(Controller)
 // End-point 정의, Request 받기
 controllers
-  .registerAllApis(app, apiConfigs)
+  .registerAllApis(app, apiConfigs) // apiConfigs는 설정값이며 api.ts를 import
   .then(() => {
+    // registerAllApis는 비동기 함수니까 then, catch로 에러처리 / 반환해주는 값 없음, 에러 발생시 에러 메시지 보내고, process.exit를 통해 비정상적인 종료 표시, 서버실행 x
     app.use(errorHandler)
 
     app.listen(PORT, () => {
