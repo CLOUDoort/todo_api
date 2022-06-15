@@ -1,5 +1,5 @@
 // service layered
-// controllers/resisterAllApis의 apiModule(handler)
+// controllers/resisterAllApis의 apiModule(handler), 라우터기능
 
 // Persistence Layer(DB 작업)
 
