@@ -1,4 +1,4 @@
-// service layered
+// service layered(비즈니스 로직)
 // controllers/resisterAllApis의 apiModule(handler), 라우터기능
 
 // Persistence Layer(DB 작업)
