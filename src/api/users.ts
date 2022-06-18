@@ -1,19 +1,18 @@
 // service layered(비즈니스 로직)
 // controllers/resisterAllApis의 apiModule(handler), 라우터기능
 
-// Persistence Layer(DB 작업)
-
 import { connectionWithRunFunction as connection } from "../modules/mysql"
 import bcrypt from "bcrypt"
 
 // request => params, mysql
-// response => status(http 상태 코드), bodydata
+// response => return => status(http 상태 코드), bodydata
 
 // controllers의 resisterAllApis에서 res, req 처리
+// req, res 대신 실질적으로 필요한 params와 mysql을 인자로 받고, return으로 응답해준다.
 const getUsers = async (params: any, mysql: any) => {
   console.log("getUsers Success")
-  // throw "인위적인 에러"
   return {
+    // res 대신 return으로 응답
     status: 200,
     data: {
       users: ["data"],
