@@ -12,7 +12,7 @@ import bcrypt from "bcrypt"
 const getUsers = async (params: any, mysql: any) => {
   console.log("getUsers Success")
   return {
-    // res 대신 return으로 응답
+    // res 대신 return으로 응답d
     status: 200,
     data: {
       users: ["data"],

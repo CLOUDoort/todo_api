@@ -6,6 +6,8 @@
 export interface apiConfigType {
   path: string
   method: "get" | "post" | "put" | "delete"
+  // string으로 설정했을 때, 에러 발생 => 실제 들어갈 값으로 설정
+  // method는 실제 있는 값으로만 접근하기 때문에 아무런 에러가 발생하지 않는다.
   handlerPath: string
   handlerName: string
   authorizer: boolean

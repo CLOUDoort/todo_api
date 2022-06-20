@@ -18,7 +18,7 @@ const registerAllApis = async (app: Express, configs: apiConfigsType) => {
     // apiName은 api.ts의 getUsers, postUsers... 라우터의 설정값
     const apiConfig: apiConfigType = configs[apiName]
     const { path: urlPath, method, handlerPath, handlerName, authorizer: isRequireAuthorizer } = apiConfig
-    // handlerName을 통해 handlerPath를 불러옴
+    // handlerName을 통해 handlerPath를 불러옴d
 
     // handlerPath = "./src/api/users.ts" => 상대경로
     const apiModulePath = path.join(__dirname, "../", "../", handlerPath) // users.ts의 절대경로(모듈)
@@ -31,6 +31,8 @@ const registerAllApis = async (app: Express, configs: apiConfigsType) => {
 
     // 여기서 req, res, next 처리하고 apiModule(api.ts)에서는 params와 mysql만 처리하도록 설계
     const APIHandler = (request: Request, response: Response, next: NextFunction) => {
+      // app 내부에서 request에 이미 Request라는 타입이 지정되어 있기 때문에 다른 타입을 지정할 수가 없다.
+      // 그래서 request를 as ~ 로 사용하겠다 를 통해 타입을 지정해준다.
       const req = request as RequestWithConnection
       const res = response
       const params = req.body
