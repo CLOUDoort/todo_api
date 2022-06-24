@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "ts-node restApi.ts",
     "start": "nodemon src/entry.ts",
-    "compile": "tsc 0509.ts"
+    "build": "tsc --build"
   },
   "author": "",
   "dependencies": {
