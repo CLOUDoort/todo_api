@@ -9,10 +9,10 @@ import bcrypt from "bcrypt"
 
 // controllers의 resisterAllApis에서 res, req 처리
 // req, res 대신 실질적으로 필요한 params와 mysql을 인자로 받고, return으로 응답해준다.
-const getUsers = async (params: any, mysql: any) => {
+const getUsers = async (params: any, mysql: connection) => {
   console.log("getUsers Success")
   return {
-    // res 대신 return으로 응답d
+    // res 대신 return으로 응답
     status: 200,
     data: {
       users: ["data"],
@@ -36,12 +36,12 @@ const postUsers = async (
 
   const salt = await bcrypt.genSalt(10) // 소금생성
   const hashedPassword = await bcrypt.hash(password, salt)
-  // 이메일 검증이 끝났다는 가정 하에 진행
+
   await mysql.run("INSERT INTO users (id, password, email, age, name) VALUES (?, ?, ?, ?, ?);", [id, hashedPassword, email, age, name])
 
   return {
     status: 201, // 생성해줬기 때문에 200이 아닌 201
-    data: {},
+    data: "success",
   }
 }
 
@@ -58,8 +58,8 @@ export default {
 // 회원들: users
 // 1. 회원가입
 //    - 회원 등록 POST /users
-//    - 이메일 인증 코드 발송
-//    - 이메일 인증 코드 검증
+//    - 이메일 인증 코드 발송 = 인증코드 생성 => POST/verify-codes
+//    - 이메일 인증 코드 검증 = 인증코드 읽기 => GET/verify-codes/:code
 //
 // 2. 로그인 (토큰 발급) POST /auth
 //    - 로그인

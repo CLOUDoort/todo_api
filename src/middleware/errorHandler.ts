@@ -1,6 +1,7 @@
-import express, { ErrorRequestHandler } from "express"
+import { ErrorRequestHandler } from "express"
 import errorConfigs from "../configs/error"
 
+// 익명 내보내기
 export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
   const errMessage: string = err.toString()
   console.error(err)

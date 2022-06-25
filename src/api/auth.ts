@@ -8,8 +8,7 @@ const postAuth = async (params: { id: string; password: string }, mysql: connect
   const { id, password } = params
 
   const selectHashedPassword = await mysql.run("SELECT password FROM users WHERE id = ?;", [id])
-  console.log("error", selectHashedPassword)
-  // 배열로 리턴되기 때문에 에러발생
+  // 배열로 리턴되기 때문에 그대로 아래에서 사용하면 에러 발생
   const isEqual = await bcrypt.compare(password, selectHashedPassword[0].password)
   // console.log(isEqual) // true, false 리턴
 

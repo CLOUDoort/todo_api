@@ -39,6 +39,13 @@ const apiConfigs: apiConfigsType = {
     handlerName: "postAuth",
     authorizer: false,
   },
+  sendEmailCode: {
+    path: "/verify-codes",
+    method: "post",
+    handlerPath: "./src/api/verify-codes.ts",
+    handlerName: "sendEmailCode",
+    authorizer: false,
+  },
 }
 
 export default apiConfigs
