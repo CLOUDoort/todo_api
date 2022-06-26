@@ -30,7 +30,7 @@ const apiConfigs: apiConfigsType = {
     method: "post",
     handlerPath: "./src/api/users.ts",
     handlerName: "postUsers",
-    authorizer: false,
+    authorizer: false, // 토큰을 발급받는 로그인 파트이기 때문에 authorizer는 필요없다.
   },
   postAuth: {
     path: "/auth",

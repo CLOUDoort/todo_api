@@ -8,11 +8,7 @@ interface RequestWithConnection extends Request {
   mysqlConnection?: connectionWithRunFunction
 }
 
-export const authorizer = (
-  req: RequestWithConnection,
-  res: Response,
-  next: NextFunction
-) => {
+export const authorizer = (req: RequestWithConnection, res: Response, next: NextFunction) => {
   const { authorization: bearerToken } = req.headers
   const { mysqlConnection: connection } = req
   const token = bearerToken?.replace("Bearer ", "") || ""
@@ -22,6 +18,7 @@ export const authorizer = (
   let payload = {}
   try {
     payload = JWT.verify(token, SECRET)
+    // 토큰 검증 메소드, payload를 리턴
   } catch (e) {
     throw new Error("E3000")
   }
